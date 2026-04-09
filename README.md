@@ -1,12 +1,8 @@
-GeoFormer
+# GeoFormer
 
-Official PyTorch implementation for the paper:
+Official PyTorch implementation of **Structured Invariance for Vision Backbones: A Geometric Route to MetaFormer**.
 
-Structured Invariance for Vision Backbones: A Geometric Route to MetaFormer
-
-======================================================================
-Overview
-======================================================================
+## Overview
 
 Invariance has long been a foundational prior in vision, but its role in modern vision backbones under scaling laws has become increasingly ambiguous. In practice, it is often learned implicitly through data, augmentation, and scale, while making it explicit is commonly viewed as restricting representational flexibility.
 
@@ -18,75 +14,72 @@ Within this framework, we establish a classification theorem showing that, under
 
 Because the admissible operator is spatially blind, geometric structure must be maintained through the interaction of two roles throughout the hierarchy: geometry-aware spatial operators and generic pointwise channel operators. This compositional pattern provides a geometric interpretation of the MetaFormer decomposition into spatial and channel mixing.
 
-Guided by the structured view, we instantiate GeoFormer, where geometric priors reside primarily in spatial mixing while channel mixing remains generic and pointwise. Experiments show that this structured design improves the invariance-discriminability trade-off and exhibits favorable scaling behavior.
+Guided by the structured view, we instantiate **GeoFormer**, where geometric priors reside primarily in spatial mixing while channel mixing remains generic and pointwise. Experiments show that this structured design improves the invariance-discriminability trade-off and exhibits favorable scaling behavior.
 
+## Files
 
+This repository provides the GeoFormer-related implementation built on top of the `timm` / `pytorch-image-models` codebase.
 
-======================================================================
-Files
-======================================================================
+### Root directory
 
-This repository provides the GeoFormer-related implementation built on top of the timm / pytorch-image-models codebase.
+- `train_geometaformer.py`: training entry for GeoFormer models
+- `train_metaformer.py`: training entry for MetaFormer-style baselines
+- `eval_robust.py`: robustness evaluation on ImageNet-A / R / C / Sketch
+- `wnid_to_idx_1k.json`: ImageNet-1K class mapping
+- `bash.txt`: command examples used in experiments
 
-Root directory:
-- train_geometaformer.py : training entry for GeoFormer models
-- train_metaformer.py    : training entry for MetaFormer-style baselines
-- eval_robust.py         : robustness evaluation on ImageNet-A / R / C / Sketch
-- wnid_to_idx_1k.json    : ImageNet-1K class mapping
-- bash.txt               : command examples used in experiments
+### `timm/models/`
 
-timm/models/:
-- geometaformer.py            : GeoFormer model definitions
-- geometaformer_ablations.py  : ablation model definitions
-- identity_rand_former.py     : IdentityFormer / RandFormer related implementations
-- metaformer.py               : MetaFormer-related (e.g., PoolFormer) implementation dependency
+- `geometaformer.py`: GeoFormer model definitions
+- `geometaformer_ablations.py`: ablation model definitions
+- `identity_rand_former.py`: IdentityFormer / RandFormer related implementations
+- `metaformer.py`: MetaFormer-related implementation dependency
 
-======================================================================
-Dependency
-======================================================================
+## Dependency
 
-This project depends on the timm library and is designed to run with the pytorch-image-models source tree.
+This project depends on the `timm` library and is designed to run with the `pytorch-image-models` source tree.
 
 Please make sure the relevant model files are placed under:
 
+~~~text
 timm/models/
+~~~
 
 In this release, the modified or added model files are:
 
-- geometaformer.py
-- geometaformer_ablations.py
-- identity_rand_former.py
-- metaformer.py
+- `geometaformer.py`
+- `geometaformer_ablations.py`
+- `identity_rand_former.py`
+- `metaformer.py`
 
 Install the basic dependencies with:
 
+~~~bash
 pip install torch torchvision
 pip install timm
+~~~
 
-If you run this project from the pytorch-image-models source tree, you may also use the source version directly.
+If you run this project from the `pytorch-image-models` source tree, you may also use the source version directly.
 
-======================================================================
-Dataset Preparation
-======================================================================
+## Dataset Preparation
 
 The training and evaluation scripts assume standard ImageNet-style directory layouts.
 
 Example dataset paths used in this repository:
 
-- ImageNet-1K: /home/datasets/imagenet1k/
-- ImageNet-A: /home/datasets/imagenet-a/
-- ImageNet-R: /home/datasets/imagenet-r/
-- ImageNet-C: /home/datasets/imagenet-c/
-- ImageNet-Sketch: /home/datasets/imagenet-sk/
+- ImageNet-1K: `/home/datasets/imagenet1k/`
+- ImageNet-A: `/home/datasets/imagenet-a/`
+- ImageNet-R: `/home/datasets/imagenet-r/`
+- ImageNet-C: `/home/datasets/imagenet-c/`
+- ImageNet-Sketch: `/home/datasets/imagenet-sk/`
 
 Please replace these paths with your own local dataset paths.
 
-======================================================================
-Training
-======================================================================
+## Training
 
-1. Train GeoFormer
+### 1. Train GeoFormer
 
+~~~bash
 OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
 torchrun --standalone --nnodes=1 --nproc_per_node=8 \
@@ -96,9 +89,11 @@ train_geometaformer.py \
   --output ./output/geometaformer_s12_k5 \
   --experiment scratch_run01 \
 > geometaformer_s12_k5.out 2>&1 &
+~~~
 
-2. Train MetaFormer baseline
+### 2. Train MetaFormer baseline
 
+~~~bash
 OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
 torchrun --standalone --nnodes=1 --nproc_per_node=8 \
@@ -108,17 +103,18 @@ train_metaformer.py \
   --output ./output/identityformer_s12 \
   --experiment scratch_run01 \
 > identityformer_s12.out 2>&1 &
+~~~
 
-Notes:
-- train_geometaformer.py is used for GeoFormer variants.
-- train_metaformer.py is used for MetaFormer-style baselines such as IdentityFormer.
-- Please modify CUDA_VISIBLE_DEVICES, dataset paths, output paths, and model names according to your environment.
-- Additional arguments supported by the underlying timm training pipeline may also be passed from the command line.
+### Notes
 
-======================================================================
-Robustness Evaluation
-======================================================================
+- `train_geometaformer.py` is used for GeoFormer variants.
+- `train_metaformer.py` is used for MetaFormer-style baselines such as IdentityFormer.
+- Please modify `CUDA_VISIBLE_DEVICES`, dataset paths, output paths, and model names according to your environment.
+- Additional arguments supported by the underlying `timm` training pipeline may also be passed from the command line.
 
+## Robustness Evaluation
+
+~~~bash
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun \
   --nproc_per_node=8 \
   --master_port=29611 \
@@ -131,22 +127,20 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun \
   --imagenet_sk /home/datasets/imagenet-sk/ \
   --class_map_json ./wnid_to_idx_1k.json \
   --output_json geometaformer_s12_k5_robust.json
+~~~
 
-The robustness evaluation script saves results into the JSON file specified by --output_json.
+The robustness evaluation script saves results into the JSON file specified by `--output_json`.
 
-======================================================================
-Note
-======================================================================
+## Note
 
 This work is currently under peer review, and a finalized citation entry is therefore not yet available.
 
 For access to the manuscript and other related materials, including pretrained weights, please contact:
 
-Shuren Qi
-Homepage: https://shurenqi.github.io/
-Email: shurenqi@cityu.edu.hk
+**Shuren Qi**  
+Homepage: https://shurenqi.github.io/  
+Email: shurenqi@cityu.edu.hk  
 
-This project is built upon the excellent timm / pytorch-image-models codebase. We sincerely thank the authors and contributors of timm for open-sourcing the training and model infrastructure.
+## Acknowledgement
 
-
-
+This project is built upon the excellent `timm` / `pytorch-image-models` codebase. We sincerely thank the authors and contributors of `timm` for open-sourcing the training and model infrastructure.
