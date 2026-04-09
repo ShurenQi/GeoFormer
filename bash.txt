@@ -1,0 +1,43 @@
+﻿
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%train
+
+OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
+torchrun --standalone --nnodes=1 --nproc_per_node=8 \
+train_geometaformer.py \
+  --data /home/datasets/imagenet1k/ \
+  --model geometaformer_s12_k5 \
+  --output ./output/geometaformer_s12_k5 \
+  --experiment scratch_run01 \
+> geometaformer_s12_k5.out 2>&1 &
+
+
+OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
+torchrun --standalone --nnodes=1 --nproc_per_node=8 \
+train_metaformer.py \
+  --data /home/datasets/imagenet1k/ \
+  --model identityformer_s12 \
+  --output ./output/identityformer_s12 \
+  --experiment scratch_run01 \
+> identityformer_s12.out 2>&1 &
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%eval_robust
+
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun \
+  --nproc_per_node=8 \
+  --master_port=29611 \
+  eval_robust.py \
+  --model geometaformer_s12_k5 \
+  --checkpoint /home/codes/pytorch-image-models/output/geometaformer_s12_k5/scratch_run01/model_best.pth.tar \
+  --imagenet_a /home/datasets/imagenet-a/ \
+  --imagenet_r /home/datasets/imagenet-r/ \
+  --imagenet_c /home/datasets/imagenet-c/ \
+  --imagenet_sk /home/datasets/imagenet-sk/ \
+  --class_map_json ./wnid_to_idx_1k.json \
+  --output_json geometaformer_s12_k5_robust.json
+
+
+
