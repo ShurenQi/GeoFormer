@@ -139,4 +139,4 @@ This work is currently under peer review, and a finalized citation entry is ther
 Homepage: https://shurenqi.github.io/  
 Email: shurenqi@cityu.edu.hk  
 
-This project is built upon the excellent `timm` / `pytorch-image-models` codebase. We sincerely thank the authors and contributors of `timm` for open-sourcing the training and model infrastructure.
+This project is built upon the excellent `timm` codebase. We sincerely thank the authors and contributors of `timm` for open-sourcing the training and model infrastructure.
