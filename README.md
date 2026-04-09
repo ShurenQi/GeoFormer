@@ -16,9 +16,28 @@ Because the admissible operator is spatially blind, geometric structure must be 
 
 Guided by the structured view, we instantiate **GeoFormer**, where geometric priors reside primarily in spatial mixing while channel mixing remains generic and pointwise. Experiments show that this structured design improves the invariance-discriminability trade-off and exhibits favorable scaling behavior.
 
-## Files
+## Files, Dependency, and Directory Structure
 
-This repository provides the GeoFormer-related implementation built on top of the `timm` / `pytorch-image-models` codebase.
+This repository is built on top of the `timm` / `pytorch-image-models` codebase and is **expected to follow the source-tree structure of `timm`**.
+
+In other words, this project is **not intended to be used as a completely standalone flat folder**. To run the training and evaluation scripts correctly, the repository should be organized in a way that is compatible with the original `timm` directory layout, especially for model definition files under `timm/models/`.
+
+A recommended directory structure is:
+
+~~~text
+pytorch-image-models/
+├── train_geometaformer.py
+├── train_metaformer.py
+├── eval_robust.py
+├── wnid_to_idx_1k.json
+├── bash.txt
+└── timm/
+    └── models/
+        ├── geometaformer.py
+        ├── geometaformer_ablations.py
+        ├── identity_rand_former.py
+        └── metaformer.py
+~~~
 
 ### Root directory
 
@@ -32,25 +51,10 @@ This repository provides the GeoFormer-related implementation built on top of th
 
 - `geometaformer.py`: GeoFormer model definitions
 - `geometaformer_ablations.py`: ablation model definitions
-- `identity_rand_former.py`: IdentityFormer / RandFormer related implementations
-- `metaformer.py`: MetaFormer-related implementation dependency
+- `identity_rand_former.py`: MetaFormer baselines, including IdentityFormer / RandFormer
+- `metaformer.py`: MetaFormer baselines, including PoolFormer and related implementations
 
-## Dependency
-
-This project depends on the `timm` library and is designed to run with the `pytorch-image-models` source tree.
-
-Please make sure the relevant model files are placed under:
-
-~~~text
-timm/models/
-~~~
-
-In this release, the modified or added model files are:
-
-- `geometaformer.py`
-- `geometaformer_ablations.py`
-- `identity_rand_former.py`
-- `metaformer.py`
+### Dependency
 
 Install the basic dependencies with:
 
@@ -59,9 +63,8 @@ pip install torch torchvision
 pip install timm
 ~~~
 
-If you run this project from the `pytorch-image-models` source tree, you may also use the source version directly.
 
-## Dataset Preparation
+## Dataset, Training, and Evaluation
 
 The training and evaluation scripts assume standard ImageNet-style directory layouts.
 
@@ -74,8 +77,6 @@ Example dataset paths used in this repository:
 - ImageNet-Sketch: `/home/datasets/imagenet-sk/`
 
 Please replace these paths with your own local dataset paths.
-
-## Training
 
 ### 1. Train GeoFormer
 
@@ -105,14 +106,7 @@ train_metaformer.py \
 > identityformer_s12.out 2>&1 &
 ~~~
 
-### Notes
-
-- `train_geometaformer.py` is used for GeoFormer variants.
-- `train_metaformer.py` is used for MetaFormer-style baselines such as IdentityFormer.
-- Please modify `CUDA_VISIBLE_DEVICES`, dataset paths, output paths, and model names according to your environment.
-- Additional arguments supported by the underlying `timm` training pipeline may also be passed from the command line.
-
-## Robustness Evaluation
+### Robustness Evaluation
 
 ~~~bash
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun \
@@ -129,18 +123,20 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun \
   --output_json geometaformer_s12_k5_robust.json
 ~~~
 
-The robustness evaluation script saves results into the JSON file specified by `--output_json`.
+### Notes
+
+- `train_geometaformer.py` is used for GeoFormer variants.
+- `train_metaformer.py` is used for MetaFormer-style baselines.
+- Please modify `CUDA_VISIBLE_DEVICES`, dataset paths, output paths, and model names according to your environment.
+- Additional arguments supported by the underlying `timm` training pipeline may also be passed from the command line.
+- The robustness evaluation script saves results into the JSON file specified by `--output_json`.
 
 ## Note
 
-This work is currently under peer review, and a finalized citation entry is therefore not yet available.
-
-For access to the manuscript and other related materials, including pretrained weights, please contact:
+This work is currently under peer review, and a finalized citation entry is therefore not yet available. For access to the manuscript and other related materials, including pretrained weights, please contact:
 
 **Shuren Qi**  
 Homepage: https://shurenqi.github.io/  
 Email: shurenqi@cityu.edu.hk  
-
-## Acknowledgement
 
 This project is built upon the excellent `timm` / `pytorch-image-models` codebase. We sincerely thank the authors and contributors of `timm` for open-sourcing the training and model infrastructure.
