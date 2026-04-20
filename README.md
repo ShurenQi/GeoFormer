@@ -135,14 +135,14 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun \
 
 This work is currently under peer review, and a finalized citation entry is therefore not yet available. 
 
-```bibtex
+~~~bibtex
 @article{qi_structured_invariance,
   title={Structured Invariance for Vision Backbones: A Geometric Route to MetaFormer},
   author={Qi, Shuren and Zhang, Yushu and Fang, Yuming and Cao, Xiaochun and Fan, Fenglei},
   journal={Preprint},
   year={2026}
 }
-
+~~~
 
 For access to the manuscript and other related materials, including pretrained weights, please contact:
 
