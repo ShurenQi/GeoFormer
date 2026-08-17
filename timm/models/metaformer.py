@@ -751,22 +751,6 @@ default_cfgs = generate_default_cfgs({
         hf_hub_id='timm/',
         classifier='head.fc.fc2', num_classes=21841),
 
-    'convformer_b36.sail_in1k': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2'),
-    'convformer_b36.sail_in1k_384': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2', input_size=(3, 384, 384), pool_size=(12, 12)),
-    'convformer_b36.sail_in22k_ft_in1k': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2'),
-    'convformer_b36.sail_in22k_ft_in1k_384': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2', input_size=(3, 384, 384), pool_size=(12, 12)),
-    'convformer_b36.sail_in22k': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2', num_classes=21841),
-
     'caformer_s18.sail_in1k': _cfg(
         hf_hub_id='timm/',
         classifier='head.fc.fc2'),
@@ -815,21 +799,6 @@ default_cfgs = generate_default_cfgs({
         hf_hub_id='timm/',
         classifier='head.fc.fc2', num_classes=21841),
 
-    'caformer_b36.sail_in1k': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2'),
-    'caformer_b36.sail_in1k_384': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2', input_size=(3, 384, 384), pool_size=(12, 12)),
-    'caformer_b36.sail_in22k_ft_in1k': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2'),
-    'caformer_b36.sail_in22k_ft_in1k_384': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2', input_size=(3, 384, 384), pool_size=(12, 12)),
-    'caformer_b36.sail_in22k': _cfg(
-        hf_hub_id='timm/',
-        classifier='head.fc.fc2', num_classes=21841),
 })
 
 
@@ -1002,17 +971,6 @@ def convformer_m36(pretrained=False, **kwargs) -> MetaFormer:
 
 
 @register_model
-def convformer_b36(pretrained=False, **kwargs) -> MetaFormer:
-    model_kwargs = dict(
-        depths=[3, 12, 18, 3],
-        dims=[128, 256, 512, 768],
-        token_mixers=SepConv,
-        norm_layers=LayerNorm2dNoBias,
-        **kwargs)
-    return _create_metaformer('convformer_b36', pretrained=pretrained, **model_kwargs)
-
-
-@register_model
 def caformer_s18(pretrained=False, **kwargs) -> MetaFormer:
     model_kwargs = dict(
         depths=[3, 3, 9, 3],
@@ -1044,13 +1002,3 @@ def caformer_m36(pretrained=False, **kwargs) -> MetaFormer:
         **kwargs)
     return _create_metaformer('caformer_m36', pretrained=pretrained, **model_kwargs)
 
-
-@register_model
-def caformer_b36(pretrained=False, **kwargs) -> MetaFormer:
-    model_kwargs = dict(
-        depths=[3, 12, 18, 3],
-        dims=[128, 256, 512, 768],
-        token_mixers=[SepConv, SepConv, Attention, Attention],
-        norm_layers=[LayerNorm2dNoBias] * 2 + [LayerNormNoBias] * 2,
-        **kwargs)
-    return _create_metaformer('caformer_b36', pretrained=pretrained, **model_kwargs)
